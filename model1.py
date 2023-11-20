@@ -5,25 +5,25 @@ import numpy as np
 import time
 import random
 
-# Load the model
+# 모델 로드
 model = load_model("keras_Model.h5", compile=False)
 
-# Load the labels with UTF-8 encoding
+# UTF-8 인코딩으로 레이블 로드
 class_names = open("labels.txt", "r", encoding="utf-8").readlines()
 
-# Create the array of the right shape to feed into the keras model
+# keras 모델에 피드할 적절한 모양의 배열 생성
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
-# Open a connection to the camera (0 is usually the default camera)
+# 카메라에 연결 (0은 일반적으로 기본 카메라)
 cap = cv2.VideoCapture(0)
 
-# Variables for action detection
-action_interval = 5  # The interval (in seconds) to detect the action
+# 행동 감지를 위한 변수
+action_interval = 5  # 행동을 감지할 간격 (초)
 start_time = time.time()
 hints_given = 0
 rounds_played = 0
 
-# Rock-paper-scissors game variables
+# 가위바위보 게임 변수
 user_choice = None
 computer_choice = None
 result = None
@@ -31,7 +31,7 @@ result = None
 def get_computer_choice():
     return random.choice(["Rock", "Paper", "Scissors"])
 
-# Function to provide hints
+# 힌트 제공 함수
 def provide_hint():
     global hints_given
     hints = [
@@ -46,30 +46,30 @@ def provide_hint():
         hints_given += 1
 
 while True:
-    # Capture frame-by-frame
+    # 프레임 단위로 캡처
     ret, frame = cap.read()
 
-    # Convert the frame to PIL Image
+    # 프레임을 PIL 이미지로 변환
     image = Image.fromarray(frame)
 
-    # Resize and preprocess the image
+    # 이미지 크기 조절 및 전처리
     size = (224, 224)
     image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
     image_array = np.asarray(image)
     normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
     data[0] = normalized_image_array
 
-    # Predict the class
+    # 클래스 예측
     prediction = model.predict(data)
     index = np.argmax(prediction)
     class_name = class_names[index]
     confidence_score = prediction[0][index]
 
-    # Display the frame with prediction
+    # 예측과 함께 프레임 표시
     cv2.putText(frame, f"Class: {class_name[2:]} - Confidence: {confidence_score:.2f}", (10, 30),
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     
-    # Calculate and display the remaining time
+    # 남은 시간 계산 및 표시
     elapsed_time = time.time() - start_time
     remaining_time = max(0, action_interval - elapsed_time)
     cv2.putText(frame, f"Remaining Time: {remaining_time:.2f} seconds", (10, 70),
@@ -77,11 +77,11 @@ while True:
     
     cv2.imshow('Rock-Paper-Scissors Game', frame)
 
-    # Check for action detection
+    # 행동 감지 확인
     if confidence_score > 0.5 and elapsed_time >= action_interval:
         print(f"Action Detected! Time: {elapsed_time:.2f} seconds")
         
-        # Map class names to rock, paper, or scissors
+        # 클래스 이름을 가위, 바위 또는 보로 매핑
         if "Rock" in class_name:
             user_choice = "Rock"
         elif "Paper" in class_name:
@@ -89,10 +89,10 @@ while True:
         elif "Scissors" in class_name:
             user_choice = "Scissors"
 
-        # Get computer's choice
+        # 컴퓨터의 선택 얻기
         computer_choice = get_computer_choice()
 
-        # Determine the game result
+        # 게임 결과 결정
         if user_choice == computer_choice:
             result = "무승부입니다!"
         elif (
@@ -101,11 +101,11 @@ while True:
             (user_choice == "Scissors" and computer_choice == "Paper")
         ):
             result = "이겼습니다! "
-            provide_hint()  # Provide a hint upon winning
+            provide_hint()  # 이기면 힌트 제공
         else:
             result = "이런~ 지셨군요. 다시 도전해 보세요!"
 
-        # Print and reset variables for the next detection
+        # 결과 출력 및 다음 감지를 위한 변수 재설정
         print(f"User Choice: {user_choice}, Computer Choice: {computer_choice}")
         print(result)
         action_detected = True
@@ -113,25 +113,25 @@ while True:
         hints_given = 0
         rounds_played += 1
 
-        # Check if 5 rounds have been played
+        # 5판을 다 플레이했는지 확인
         if rounds_played == 5:
-            print("5판이 끝났습니다. 이제 김연아의 인물을 맞춰보세요!")
+            print("5판이 끝났습니다. 이제 인물을 맞춰보세요!")
             break
 
-    # Break the loop if 'q' key is pressed
+    # 'q' 키가 눌렸는지 확인하여 루프 종료
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Ask the user to guess the person
+# 사용자에게 해당 인물을 추측하도록 요청
 print("기회가 끝났습니다. 이 사람은 누굴까요?")
 user_guess = input("인물의 이름을 입력하세요: ")
 
-# Check if the user's guess is correct
+# 사용자의 추측이 정확한지 확인
 if user_guess == "김연아":
     print("정답입니다! 축하합니다!")
 else:
     print("아쉽군요. 다시 도전해 보세요!")
 
-# When everything done, release the capture
+# 모든 작업이 끝나면 캡처 해제
 cap.release()
 cv2.destroyAllWindows()
