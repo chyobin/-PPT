@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, jsonify
 import cv2
 from keras.models import load_model
 from PIL import Image, ImageOps
@@ -56,6 +56,16 @@ def index():
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/play_game')
+def play_game():
+    global user_choice, computer_choice, result, hints_given, rounds_played
+
+    # 여기에 게임 로직 추가 (사용자 입력 처리, 결과 계산 등)
+    # ...
+
+    # 결과 및 힌트를 전달
+    return jsonify({'result': result, 'hint': f'힌트: {hints_given}'})
 
 if __name__ == '__main__':
     app.run(debug=True)
