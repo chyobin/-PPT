@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rock-Paper-Scissors Game</title>
 </head>
 <body>
-    <h1>Welcome to the Rock-Paper-Scissors Game!</h1>
-    <a href="/game">Start Game</a>
+    <h1>Rock-Paper-Scissors Game</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
-
