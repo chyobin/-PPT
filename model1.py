@@ -40,11 +40,13 @@ def provide_hint():
 
 @app.route('/')
 def index():
+    global rounds_played
+    rounds_played = 0
     return render_template('index.html')
 
 @app.route('/game', methods=['POST'])
 def game():
-    global user_choice, computer_choice, result, rounds_played  # 이 줄을 추가해주세요
+    global user_choice, computer_choice, result, rounds_played, hints_given
     ret, frame = cap.read()
     image = Image.fromarray(frame)
 
@@ -100,6 +102,8 @@ def game():
 
         if rounds_played == 5:
             print("5판이 끝났습니다. 이제 인물을 맞춰보세요!")
+            rounds_played = 0
+            hints_given = 0
             return render_template('guess.html')
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
