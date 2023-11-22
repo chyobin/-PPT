@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock-Paper-Scissors Game</title>
+</head>
+<body>
+    <h1>Rock-Paper-Scissors Game</h1>
+    <p>User Choice: {{ user_choice }}</p>
+    <p>Computer Choice: {{ computer_choice }}</p>
+    <p>{{ result }}</p>
+    <form action="/result" method="post">
+        <label for="user_guess">Guess the Object:</label>
+        <input type="text" id="user_guess" name="user_guess" required>
+        <button type="submit">Submit Guess</button>
+    </form>
+</body>
+</html>
