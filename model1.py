@@ -44,7 +44,7 @@ def index():
 
 @app.route('/game', methods=['POST'])
 def game():
-    global user_choice, computer_choice, result
+    global user_choice, computer_choice, result, rounds_played  # 이 줄을 추가해주세요
     ret, frame = cap.read()
     image = Image.fromarray(frame)
 
