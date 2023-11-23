@@ -89,7 +89,6 @@ def game():
         
         action_detected = True
         start_time = time.time()
-        hints_given += 1
         rounds_played += 1
         
         if rounds_played == 5:
@@ -108,6 +107,17 @@ def guess():
         return redirect(url_for('game_result', result="정답입니다! 축하합니다!"))
     else:
         return redirect(url_for('game_result', result="아쉽군요. 다시 도전해 보세요!"))
+
+@app.route('/more_hints')
+def more_hints():
+    hint = provide_hint()
+    return render_template('more_hints.html', hint=hint)
+
+@app.route('/game_records')
+def game_records():
+    # 여기에 게임 결과를 기록하고 보여주는 로직 추가
+    records = ["Game 1: Win", "Game 2: Draw", "Game 3: Loss"]
+    return render_template('game_records.html', records=records)
 
 @app.route('/game_over', methods=['GET', 'POST'])
 def game_over():

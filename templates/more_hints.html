@@ -1,4 +1,4 @@
-<!-- game_result.html -->
+<!-- more_hints.html -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,8 +8,12 @@
     <title>Rock-Paper-Scissors Game</title>
 </head>
 <body>
-    <h1>Game Result</h1>
-    <p>{{ result }}</p>
-    <p>Rounds Played: {{ rounds_played }}</p>
+    <h1>More Hints</h1>
+    {% if hint %}
+        <p>Hint: {{ hint }}</p>
+    {% else %}
+        <p>No more hints available.</p>
+    {% endif %}
+    <a href="/game">Back to Game</a>
 </body>
 </html>

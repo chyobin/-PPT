@@ -1,3 +1,5 @@
+<!-- game_over.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,11 +9,10 @@
 </head>
 <body>
     <h1>Game Over</h1>
-    <p>5 rounds played. Guess the person!</p>
+    <p>Guess the celebrity:</p>
     <form action="/game_over" method="post">
-        <label for="user_guess">Guess the person:</label>
-        <input type="text" id="user_guess" name="user_guess" required>
-        <input type="submit" value="Submit">
+        <input type="text" name="user_guess" required>
+        <button type="submit">Submit</button>
     </form>
 </body>
 </html>

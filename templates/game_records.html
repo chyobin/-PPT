@@ -1,4 +1,4 @@
-<!-- game_result.html -->
+<!-- game_records.html -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,8 +8,12 @@
     <title>Rock-Paper-Scissors Game</title>
 </head>
 <body>
-    <h1>Game Result</h1>
-    <p>{{ result }}</p>
-    <p>Rounds Played: {{ rounds_played }}</p>
+    <h1>Game Records</h1>
+    <ul>
+        {% for record in records %}
+            <li>{{ record }}</li>
+        {% endfor %}
+    </ul>
+    <a href="/game">Back to Game</a>
 </body>
 </html>

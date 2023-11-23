@@ -1,3 +1,5 @@
+<!-- game.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,11 +9,32 @@
 </head>
 <body>
     <h1>Rock-Paper-Scissors Game</h1>
-    <img src="data:image/jpeg;base64,{{ frame }}" alt="Camera Feed">
-    <p>Class: {{ class_name }} - Confidence: {{ confidence_score }}</p>
-    <p>Remaining Time: {{ remaining_time }} seconds</p>
-    <p>Result: {{ result }}</p>
-    <p>User Choice: {{ user_choice }}</p>
-    <p>Computer Choice: {{ computer_choice }}</p>
+    
+    <p>
+        Class: {{ class_name }} - Confidence: {{ confidence_score }}
+    </p>
+    
+    <p>
+        Remaining Time: {{ remaining_time }} seconds
+    </p>
+    
+    <p>
+        Result: {{ result }}
+    </p>
+    
+    <p>
+        User Choice: {{ user_choice }}, Computer Choice: {{ computer_choice }}
+    </p>
+
+    <p>
+        <a href="/more_hints">Get More Hints</a>
+        <a href="/game_records">Game Records</a>
+    </p>
+
+    <img src="{{ url_for('video_feed') }}" alt="Video Feed" style="width: 640px; height: 480px;">
+
+    <script>
+        // Add any JavaScript code if needed
+    </script>
 </body>
 </html>
