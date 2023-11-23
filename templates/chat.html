@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Object</title>
+    <title>Rock-Paper-Scissors Game</title>
 </head>
 <body>
-    <h1>Guess the Object</h1>
-    <p>You have completed 5 rounds. Now, guess the object in the image.</p>
-    <form action="/result" method="post">
+    <h1>Chat to Guess</h1>
+    <p>Can you guess who this person is?</p>
+    <form action="/guess" method="post">
         <label for="user_guess">Your Guess:</label>
         <input type="text" id="user_guess" name="user_guess" required>
-        <button type="submit">Submit Guess</button>
+        <input type="submit" value="Submit">
     </form>
 </body>
 </html>

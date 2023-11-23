@@ -7,13 +7,11 @@
 </head>
 <body>
     <h1>Rock-Paper-Scissors Game</h1>
+    <img src="data:image/jpeg;base64,{{ frame }}" alt="Camera Feed">
+    <p>Class: {{ class_name }} - Confidence: {{ confidence_score }}</p>
+    <p>Remaining Time: {{ remaining_time }} seconds</p>
+    <p>Result: {{ result }}</p>
     <p>User Choice: {{ user_choice }}</p>
     <p>Computer Choice: {{ computer_choice }}</p>
-    <p>{{ result }}</p>
-    <form action="/result" method="post">
-        <label for="user_guess">Guess the Object:</label>
-        <input type="text" id="user_guess" name="user_guess" required>
-        <button type="submit">Submit Guess</button>
-    </form>
 </body>
 </html>
