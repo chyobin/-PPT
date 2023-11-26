@@ -29,7 +29,7 @@ rounds_played = 0
 # 가위바위보 게임 변수
 user_choice = None
 computer_choice = None
-result = ""
+result = None
 
 # 힌트 제공 함수
 def provide_hint():
@@ -120,7 +120,7 @@ def gen_frames():
 
             # 5판을 다 플레이했는지 확인
             if rounds_played == 5:
-                result = "5판이 끝났습니다. 이제 정답을 입력하세요!"
+                print("5판이 끝났습니다. 이제 인물을 맞춰보세요!")
                 break
 
         ret, buffer = cv2.imencode('.jpg', frame)
