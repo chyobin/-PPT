@@ -8,8 +8,6 @@ import random
 
 app = Flask(__name__)
 
-
-
 # 모델 로드
 model = load_model("keras_Model.h5", compile=False)
 
@@ -132,27 +130,11 @@ print("기회가 끝났습니다. 이 사람은 누굴까요?")
 user_guess = input("인물의 이름을 입력하세요: ")
 
 # 사용자의 추측이 정확한지 확인
-@app.route('/')
-def index():
-    return render_template('index.html')
+if user_guess == "김연아":
+    print("정답입니다! 축하합니다!")
+else:
+    print("아쉽군요. 다시 도전해 보세요!")
 
-@app.route('/play_game', methods=['POST'])
-def play_game():
-    # ... (이전까지의 코드와 동일)
-
-    if rounds_played == 5:
-        return render_template('end_game.html')
-
-    return render_template('play_game.html', result=result, user_choice=user_choice, computer_choice=computer_choice)
-
-@app.route('/guess', methods=['POST'])
-def guess():
-    user_guess = request.form['user_guess']
-
-    if user_guess == "김연아":
-        return render_template('win.html')
-    else:
-        return render_template('lose.html', correct_answer="김연아")
-
-if __name__ == '__main__':
-    app.run(debug=True)
+# 모든 작업이 끝나면 캡처 해제
+cap.release()
+cv2.destroyAllWindows()
