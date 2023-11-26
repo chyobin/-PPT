@@ -5,8 +5,12 @@ from PIL import Image, ImageOps
 import numpy as np
 import time
 import random
+import base64
+from io import BytesIO
+from flask import Response
 
 app = Flask(__name__)
+cap = cv2.VideoCapture(0)
 
 # 모델 로드
 model = load_model("keras_Model.h5", compile=False)
@@ -16,9 +20,6 @@ class_names = open("labels.txt", "r", encoding="utf-8").readlines()
 
 # keras 모델에 피드할 적절한 모양의 배열 생성
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
-
-# 카메라에 연결 (0은 일반적으로 기본 카메라)
-cap = cv2.VideoCapture(0)
 
 # 행동 감지를 위한 변수
 action_interval = 20  # 행동을 감지할 간격 (초)
@@ -47,6 +48,18 @@ def provide_hint():
     if hints_given < len(hints):
         print("힌트: " + hints[hints_given])
         hints_given += 1
+
+def video_stream():
+    cap = cv2.VideoCapture(0)
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        frame_data = base64.b64encode(jpeg.tobytes()).decode('utf-8')
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_data.encode() + b'\r\n\r\n')
+        time.sleep(0.1)
 
 @app.route('/')
 def index():
@@ -98,6 +111,10 @@ def play_game():
                 print("5판이 끝났습니다. 이제 인물을 맞춰보세요!")
 
     return render_template('game.html', user_choice=user_choice, computer_choice=computer_choice, result=result, hint=provide_hint())
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(video_stream(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
     app.run(debug=True)
