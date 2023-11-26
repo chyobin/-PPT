@@ -7,7 +7,12 @@
     <title>Rock-Paper-Scissors Game</title>
 </head>
 <body>
-    <h1>Rock-Paper-Scissors 게임에 오신 것을 환영합니다!</h1>
-    <a href="/play_game">게임 시작</a>
+    <h1>라운드 결과</h1>
+    <p>{{ result }}</p>
+    <p>사용자 선택: {{ user_choice }}</p>
+    <p>컴퓨터 선택: {{ computer_choice }}</p>
+    <form action="/play_game" method="post">
+        <button type="submit">다음 라운드</button>
+    </form>
 </body>
 </html>

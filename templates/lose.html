@@ -1,19 +1,13 @@
-<!-- game_records.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rock-Paper-Scissors Game</title>
 </head>
 <body>
-    <h1>Game Records</h1>
-    <ul>
-        {% for record in records %}
-            <li>{{ record }}</li>
-        {% endfor %}
-    </ul>
-    <a href="/game">Back to Game</a>
+    <h1>이런!</h1>
+    <p>당신의 추측이 틀렸습니다. 정답은: {{ correct_answer }}</p>
 </body>
 </html>
