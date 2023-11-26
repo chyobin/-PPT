@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, jsonify
+from flask import Flask, render_template, request
 import cv2
 from keras.models import load_model
 from PIL import Image, ImageOps
@@ -30,7 +30,6 @@ rounds_played = 0
 user_choice = None
 computer_choice = None
 result = None
-game_results = []
 
 def get_computer_choice():
     return random.choice(["Rock", "Paper", "Scissors"])
@@ -46,75 +45,71 @@ def provide_hint():
         "이 인물은 대중 매체에 자주 등장하는 연예인입니다."
     ]
     if hints_given < len(hints):
-        print("힌트: " + hints[hints_given])
+        return hints[hints_given]
         hints_given += 1
 
-def generate_frames():
-    global model, class_names, data, cap, action_interval, start_time, hints_given, rounds_played
-    global user_choice, computer_choice, result, game_results
-
-    while True:
-        ret, frame = cap.read()
-
-        # 프레임을 PIL 이미지로 변환
-        image = Image.fromarray(frame)
-
-        # 이미지 크기 조절 및 전처리
-        size = (224, 224)
-        image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
-        image_array = np.asarray(image)
-        normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
-        data[0] = normalized_image_array
-
-        # 클래스 예측
-        prediction = model.predict(data)
-        index = np.argmax(prediction)
-        class_name = class_names[index]
-        confidence_score = prediction[0][index]
-
-        # 예측과 함께 프레임 표시
-        cv2.putText(frame, f"Class: {class_name[2:]} - Confidence: {confidence_score:.2f}", (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-        # 남은 시간 계산 및 표시
-        elapsed_time = time.time() - start_time
-        remaining_time = max(0, action_interval - elapsed_time)
-        cv2.putText(frame, f"Remaining Time: {remaining_time:.2f} seconds", (10, 70),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-        ret, buffer = cv2.imencode('.jpg', frame)
-        frame = buffer.tobytes()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
+# 웹 페이지 라우팅
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/video_feed')
-def video_feed():
-    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-@app.route('/play_game')
+@app.route('/play_game', methods=['POST'])
 def play_game():
-    global user_choice, computer_choice, result, game_results
+    global user_choice, computer_choice, result
+    # 게임 로직을 그대로 사용
+    ret, frame = cap.read()
+    image = Image.fromarray(frame)
+    size = (224, 224)
+    image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
+    image_array = np.asarray(image)
+    normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
+    data[0] = normalized_image_array
+    prediction = model.predict(data)
+    index = np.argmax(prediction)
+    class_name = class_names[index]
+    confidence_score = prediction[0][index]
+    cv2.putText(frame, f"Class: {class_name[2:]} - Confidence: {confidence_score:.2f}", (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    elapsed_time = time.time() - start_time
+    remaining_time = max(0, action_interval - elapsed_time)
+    cv2.putText(frame, f"Remaining Time: {remaining_time:.2f} seconds", (10, 70),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    cv2.imshow('Rock-Paper-Scissors Game', frame)
 
-    # 가위바위보 게임 로직 추가
-    if user_choice is not None and computer_choice is not None and result is not None:
-        game_results.append({
-            'user_choice': user_choice,
-            'computer_choice': computer_choice,
-            'result': result
-        })
+    if confidence_score > 0.5 and elapsed_time >= action_interval:
+        print(f"Action Detected! Time: {elapsed_time:.2f} seconds")
+        if "Rock" in class_name:
+            user_choice = "Rock"
+        elif "Paper" in class_name:
+            user_choice = "Paper"
+        elif "Scissors" in class_name:
+            user_choice = "Scissors"
+        computer_choice = get_computer_choice()
+        if user_choice == computer_choice:
+            result = "무승부입니다!"
+        elif (
+            (user_choice == "Rock" and computer_choice == "Scissors") or
+            (user_choice == "Paper" and computer_choice == "Rock") or
+            (user_choice == "Scissors" and computer_choice == "Paper")
+        ):
+            result = "이겼습니다! "
+            provide_hint()
+        else:
+            result = "이런~ 지셨군요. 다시 도전해 보세요!"
+        print(f"User Choice: {user_choice}, Computer Choice: {computer_choice}")
+        print(result)
+        action_detected = True
+        start_time = time.time()
+        hints_given = 0
+        rounds_played += 1
+        if rounds_played == 5:
+            print("5판이 끝났습니다. 이제 인물을 맞춰보세요!")
+            return redirect(url_for('index'))
 
-        # 결과를 HTML에 업데이트
-        return jsonify({
-            'user_choice': user_choice,
-            'computer_choice': computer_choice,
-            'result': result
-        })
-    else:
-        return jsonify({'error': 'Game not played yet.'})
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        return redirect(url_for('index'))
 
-if __name__ == "__main__":
+    return render_template('game.html', user_choice=user_choice, computer_choice=computer_choice, result=result, hint=provide_hint())
+
+if __name__ == '__main__':
     app.run(debug=True)

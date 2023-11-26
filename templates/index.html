@@ -1,20 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rock-Paper-Scissors Game</title>
-    <script src="{{ url_for('static', filename='main.js') }}"></script>
-</head>
-<body>
-    <h1>Rock-Paper-Scissors Game</h1>
-    <img src="{{ url_for('video_feed') }}" width="640" height="480" style="border: 1px solid black;">
-    
-    <div id="game-results">
-        <h2>Game Results</h2>
-        <p id="user-choice">User Choice: </p>
-        <p id="computer-choice">Computer Choice: </p>
-        <p id="result">Result: </p>
-    </div>
-</body>
-</html>
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1 class="mb-4">Rock-Paper-Scissors Game</h1>
+    <form action="{{ url_for('play_game') }}" method="post">
+        <button type="submit" class="btn btn-primary">Play Game</button>
+    </form>
+{% endblock %}
