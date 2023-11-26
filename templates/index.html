@@ -1,8 +1,25 @@
-{% extends 'layout.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock-Paper-Scissors Game</title>
+</head>
+<body>
+    <h1>Rock-Paper-Scissors Game</h1>
+    {% if result %}
+        <p>{{ result }}</p>
+    {% endif %}
 
-{% block content %}
-    <h1 class="mb-4">Rock-Paper-Scissors Game</h1>
-    <form action="{{ url_for('play_game') }}" method="post">
-        <button type="submit" class="btn btn-primary">Play Game</button>
-    </form>
-{% endblock %}
+    <!-- 비디오 피드 표시 (기존 코드 유지) -->
+
+    <!-- 사용자의 정답 입력 폼 -->
+    {% if "5판이 끝났습니다." in result %}
+        <form action="/guess" method="post">
+            <label for="user_guess">인물의 이름을 입력하세요:</label>
+            <input type="text" id="user_guess" name="user_guess" required>
+            <input type="submit" value="확인">
+        </form>
+    {% endif %}
+</body>
+</html>
