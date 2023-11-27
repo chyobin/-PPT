@@ -3,42 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rock-Paper-Scissors Game</title>
+    <title>Rock Paper Scissors Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        #result {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        #video-container {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Rock-Paper-Scissors Game</h1>
+    <h1>Rock Paper Scissors Game</h1>
 
-    <!-- Video feed from the webcam -->
-    <img id="video_feed" src="{{ url_for('video_feed') }}" style="width: 640px; height: 480px;">
+    <div id="result">
+        {% if result %}
+            {{ result }}
+        {% endif %}
+    </div>
 
-    <!-- Display the result of each round -->
-    <h2>{{ result }}</h2>
+    <div id="video-container">
+        <img id="video-feed" src="{{ url_for('video_feed') }}" alt="Video Feed" width="640" height="480">
+    </div>
 
-    <!-- User input form for guessing the character -->
-    {% if result and "5판이 끝났습니다. 이제 인물을 맞춰보세요!" in result %}
-        <form action="{{ url_for('guess') }}" method="post">
-            <label for="user_guess">인물 추측:</label>
-            <input type="text" id="user_guess" name="user_guess" required>
-            <input type="submit" value="확인">
-        </form>
-    {% elif result and "랜덤 인물" in result %}
-        <form action="{{ url_for('guess') }}" method="post">
-            <label for="user_guess">정답 입력:</label>
-            <input type="text" id="user_guess" name="user_guess" required>
-            <input type="submit" value="확인">
-        </form>
-    {% endif %}
+    <form action="/guess" method="post">
+        <label for="user_guess">인물 추측:</label>
+        <input type="text" id="user_guess" name="user_guess" required>
+        <button type="submit">제출</button>
+    </form>
 
-    <!-- Display hints if the user won the game -->
-    {% if result and "이겼습니다!" in result %}
-        <p id="hint">{{ url_for('hint') }}</p>
-    {% endif %}
+    <div id="hint">
+        <button onclick="getHint()">힌트 얻기</button>
+    </div>
 
     <script>
-        // Auto-refresh the video feed every 2 seconds
-        setInterval(function(){
-            document.getElementById('video_feed').src = "{{ url_for('video_feed') }}?" + new Date().getTime();
-        }, 2000);
+        function getHint() {
+            fetch('/hint')
+                .then(response => response.text())
+                .then(hint => {
+                    if (hint) {
+                        alert(hint);
+                    } else {
+                        alert("힌트를 얻을 수 없습니다.");
+                    }
+                });
+        }
     </script>
 </body>
 </html>
