@@ -4,90 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rock-Paper-Scissors Game</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-        }
-
-        #game-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #video_feed {
-            width: 640px;
-            height: 480px;
-            margin-bottom: 20px;
-        }
-
-        #hint {
-            margin-bottom: 20px;
-        }
-
-        #guess_form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #user_guess {
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
 <body>
-    <div id="game-container">
-        <h1>Rock-Paper-Scissors Game</h1>
-        <img id="video_feed" src="{{ url_for('video_feed') }}" alt="Video Feed">
-        <p id="hint"></p>
-        <form id="guess_form" action="/guess" method="post">
-            <label for="user_guess">인물의 이름을 입력하세요:</label>
-            <input type="text" id="user_guess" name="user_guess">
-            <button type="submit">추측</button>
+    <h1>Rock-Paper-Scissors Game</h1>
+
+    <!-- Video feed from the webcam -->
+    <img id="video_feed" src="{{ url_for('video_feed') }}" style="width: 640px; height: 480px;">
+
+    <!-- Display the result of each round -->
+    <h2>{{ result }}</h2>
+
+    <!-- User input form for guessing the character -->
+    {% if result and "5판이 끝났습니다. 이제 인물을 맞춰보세요!" in result %}
+        <form action="{{ url_for('guess') }}" method="post">
+            <label for="user_guess">인물 추측:</label>
+            <input type="text" id="user_guess" name="user_guess" required>
+            <input type="submit" value="확인">
         </form>
-    </div>
+    {% endif %}
+
+    <!-- Display hints if the user won the game -->
+    {% if result and "이겼습니다!" in result %}
+        <!-- Modify this line to display the hint directly from the 'result' variable -->
+        <p id="hint">{{ result }}</p>
+    {% endif %}
+
     <script>
-        const video = document.getElementById('video_feed');
-        const hint = document.getElementById('hint');
-        const guessForm = document.getElementById('guess_form');
-
-        video.onload = () => {
-            video.scrollIntoView();
-        };
-
-        setInterval(() => {
-            fetch('/hint')
-                .then(response => response.text())
-                .then(data => {
-                    hint.innerHTML = data;
-                });
-        }, 10000);  // 10초마다 힌트 업데이트
-
-        guessForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const userGuess = document.getElementById('user_guess').value;
-            fetch('/guess', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `user_guess=${userGuess}`,
-            })
-            .then(response => response.text())
-            .then(data => {
-                alert(data);  // 결과를 알림으로 표시
-            });
-        });
+        // Auto-refresh the video feed every 2 seconds
+        setInterval(function(){
+            document.getElementById('video_feed').src = "{{ url_for('video_feed') }}?" + new Date().getTime();
+        }, 2000);
     </script>
 </body>
 </html>
