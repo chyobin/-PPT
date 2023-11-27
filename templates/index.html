@@ -41,18 +41,7 @@
         <button onclick="getHint()">힌트 얻기</button>
     </div>
 
-    <script>
-        function getHint() {
-            fetch('/hint')
-                .then(response => response.text())
-                .then(hint => {
-                    if (hint) {
-                        alert(hint);
-                    } else {
-                        alert("힌트를 얻을 수 없습니다.");
-                    }
-                });
-        }
-    </script>
+    <!-- 스크립트 파일 불러오기 -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
